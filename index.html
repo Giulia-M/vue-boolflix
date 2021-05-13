@@ -4,13 +4,45 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-
+    <title>Vue-Boolflix</title>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    
+    <div id="app">
+        <!-- searchbar -->
+        <div>
+            <form @submit.prevent="doSearch">
+                <input type="text" v-model="textTosearch">
+                <button type="submit">Cerca</button>
+            </form>
+        </div>
+        <ul>
+            <!-- ogni li dovreà stampare 
+            titolo 
+            titolo originale 
+            lingua
+            voto
+            -->
+            <li v-for="movie in fullList">
+                <img v-if="movie.poster_path" :src="movie.poster_path" :alt="movie.title" width="200">
+                <p>Titolo del film {{movie.title}}</p>
+                <p>Titolo originale {{movie.original_title}}</p>
+                <p>Lingua <img :src="movie.flag" :alt="movie.original_language" width="24" height="24" /></p>
+                <p>Voto</p>
+                <div class="stars">
+                    <span v-for="value in 5" class="star">
+                        <i v-if="value <= movie.vote_average" class="fa fa-star"></i>
+                        <i v-else class="far fa-star"></i>
+                    </span>
+                </div>
+            </li>
+        </ul>
+    </div>
     <script src="scripts/app.js"></script>
 </body>
+
 </html>
