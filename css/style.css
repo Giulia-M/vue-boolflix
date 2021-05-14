@@ -10,21 +10,37 @@ li {
     list-style-type: none;
     display: inline-block;
     margin: 0 10px;
+    position: relative;
 }
-.myBtn {
+div button.myBtn {
     color: red;
     border-color: red;
 }
 .color-text-white {
     color:white;
-    width: 185px;
+    width: 170px;
 }
 .padd-wrapper {
     padding-top: 100px;
 }
 .wrapper-paragraph {
     display:none;
+    position: absolute;
+    top: 50%;
+    transform: translate(50%, -50%);
+    right: 50%;
+
 }
 .displayBlock:hover .wrapper-paragraph {
     display: block;
+    background-color: rgba(0, 0, 0, 1);
+    height: 300px;
+    width: 200px;
+ 
 } 
+.stars {
+    color:orange;
+}
+.color-white {
+    color: white;
+}
