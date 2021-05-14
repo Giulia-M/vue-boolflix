@@ -22,6 +22,9 @@ li {
 .padd-wrapper {
     padding-top: 100px;
 }
-.hover01 {
-
+.wrapper-paragraph {
+    display:none;
 }
+.displayBlock:hover .wrapper-paragraph {
+    display: block;
+} 

@@ -35,15 +35,16 @@
         
         <div class="d-flex padd-wrapper">
             <ul class="d-flex">
-                <li v-for="movie in fullList">
-                    <img @mouseover="mouseOver"
-                    @mouseleave= "mouseOver"
-                    @click="toUserClick(movie.prova)"
-                    v-if="movie.poster_path" :src="movie.poster_path" :alt="movie.title" width="200" 
-                    >
-
-                    <!-- :class="{selected = movie.active }"  -->
-                    <div v-if="active" class="color-text-white">
+                <li v-for="movie in fullList" class="displayBlock">
+                    <img 
+                    v-if="movie.poster_path" :src="movie.poster_path" :alt="movie.title" width="200">
+                    <!-- 
+                        @mouseover="mouseOver"
+                        @mouseleave= "mouseOver"
+                        @click="toUserClick(movie)" -->
+                    <!-- :class="{selected: movie.backdrop_path === activeUser.avatar }"
+                    v-if="active" -->
+                    <div  class="color-text-white wrapper-paragraph">
                         <p>Titolo del film {{movie.title}}</p>
                         <p>Titolo originale {{movie.original_title}}</p>
                         <!-- <p>Lingua <img :src="movie.flag" :alt="movie.original_language" width="24" height="24" /></p> -->

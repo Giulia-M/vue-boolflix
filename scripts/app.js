@@ -7,8 +7,8 @@ new Vue({
         //2 liste separate:
         moviesList: [],
         tvSeriesList: [],
-        active: false,
-        activeImg: {}
+        // active: false,
+        // activeImg: {}
     },
     methods: {
         makeAxiosSearch(searchType) {
@@ -66,7 +66,7 @@ new Vue({
             const candidatesCountries = lang2country[queryLang] ? lang2country[queryLang] : [fallbackFlag]
             return candidatesCountries[0] 
     },
-    
+    /*
     mouseOver(clickedUser){
         this.active = !this.active;  
         this.activeImg = clickedUser
@@ -79,6 +79,7 @@ new Vue({
     toUserClick(clickedUser) {
         this.activeImg = clickedUser
     },
+    */
     
 },
     computed: {
@@ -101,8 +102,7 @@ new Vue({
                 flag: flag,
                 poster_path: poster,
                 vote_average: Math.round(item.vote_average / 2),
-                prova: true
-               
+           
             }
         })
     }
