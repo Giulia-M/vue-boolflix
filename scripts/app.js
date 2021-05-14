@@ -7,8 +7,7 @@ new Vue({
         //2 liste separate:
         moviesList: [],
         tvSeriesList: [],
-        // active: false,
-        // activeImg: {}
+       
     },
     methods: {
         makeAxiosSearch(searchType) {
@@ -66,21 +65,7 @@ new Vue({
             const candidatesCountries = lang2country[queryLang] ? lang2country[queryLang] : [fallbackFlag]
             return candidatesCountries[0] 
     },
-    /*
-    mouseOver(clickedUser){
-        this.active = !this.active;  
-        this.activeImg = clickedUser
-        const prova = false
-        if(clickedUser) {
-            prova = true
-        }
-
-    },
-    toUserClick(clickedUser) {
-        this.activeImg = clickedUser
-    },
-    */
-    
+   
 },
     computed: {
     fullList() {

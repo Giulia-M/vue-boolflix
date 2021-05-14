@@ -3,8 +3,10 @@
     margin:0;
     box-sizing: border-box;
 }
+
 .body-dark {
     background-color: rgb(0, 0, 0);
+    font-family: "Open Sans", sans-serif;
 }
 li {
     list-style-type: none;
