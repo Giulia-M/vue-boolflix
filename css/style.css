@@ -1,0 +1,27 @@
+*{
+    padding: 0;
+    margin:0;
+    box-sizing: border-box;
+}
+.body-dark {
+    background-color: rgb(0, 0, 0);
+}
+li {
+    list-style-type: none;
+    display: inline-block;
+    margin: 0 10px;
+}
+.myBtn {
+    color: red;
+    border-color: red;
+}
+.color-text-white {
+    color:white;
+    width: 185px;
+}
+.padd-wrapper {
+    padding-top: 100px;
+}
+.hover01 {
+
+}
