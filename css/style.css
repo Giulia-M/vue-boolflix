@@ -46,3 +46,16 @@ div button.myBtn {
 .color-white {
     color: white;
 }
+
+.flag-icon {
+    background-color: #ccc;
+}
+.display-inl-bloc {
+    display:inline-block;
+}
+.paddBott {
+    padding-bottom: 20px;
+}
+.margLeft {
+    margin-left: 20px;
+}

@@ -1,13 +1,23 @@
 new Vue({
     el: "#app",
     data: {
-        flags: ['de', 'en', 'es', 'fr', 'it'],
+        flags: {
+            en: 'us'
+        },
         textTosearch: "",
         tmdbApiKey: "d74e01c1c95f676efb7328c3ce5b6713",
         //2 liste separate:
         moviesList: [],
         tvSeriesList: [],
-       
+        //generi film
+        movieGenres: [],
+        tvGenres: [],
+        genreFilter: ''
+    },
+    //quando l'app è pronta (hook mounted) carico la lista dei generi dei film e delle serie salvandoli nelle rispettive variabili in data 
+    mounted() {
+        this.loadGenres('movie')
+        this.loadGenres('tv')
     },
     methods: {
         makeAxiosSearch(searchType) {
@@ -18,7 +28,7 @@ new Vue({
                     language: "it-IT"
                 }
             };
-            //  axios.get("https://api.themoviedb.org/3/search/movie?api_key" + tmdbApiKey + "&query=" + this.textTosearch + "&language=it-IT" )
+            //  axios.get("https://api.themoviedb.org/3/search/  movie?api_key" + tmdbApiKey + "&query=" + this.textTosearch + "&language=it-IT" )
             axios.get("https://api.themoviedb.org/3/search/" + searchType, axiosOptions)
                 .then((resp) => {
                     // per recuperare i dati json dati dal server mi aspetto di trovare l'array di tutti gli oggetti 
@@ -32,9 +42,13 @@ new Vue({
                             //mappatura dei campi 
                             tvShow.original_title = tvShow.original_name
                             tvShow.title = tvShow.name
+
+                            tvShow.isSerie = true
+
                             return tvShow
                         })
                     }
+                    console.log(resp.data.results)
 
                 })
         },
@@ -49,47 +63,123 @@ new Vue({
             this.makeAxiosSearch("tv");
             //concat()?? 2 array uniti insieme 
         },
-        flagsMap(currentMovie) {
-            // definisco la mappa ( non le mappo tutte, solo le piu importanti)
-            const lang2country = {
-                'en': ['us'],
-                'es': ['es'],
-                'de': ['de'],
-                'fr': ['fr'],
-                'it': ['it']
-            }
-            // scelgo una bandiera che usero' in caso non trovassi quelle che cercavo
-            const fallbackFlag = "null"
-                // ottengo la lingua di cui voglio trovare le bandiere dei country associati
-            const queryLang = currentMovie.original_language
-            const candidatesCountries = lang2country[queryLang] ? lang2country[queryLang] : [fallbackFlag]
-            return candidatesCountries[0] 
-    },
-   
-},
-    computed: {
-    fullList() {
-        return [...this.moviesList, ...this.tvSeriesList].map(item => {
-            let flag
-           
-            if (this.flags.includes(item.original_language)) {
-                flag = `img/${item.original_language}.png`
-            } else {
-                flag = 'img/default.png'
-            }
-            let poster = false;
-            if (item.poster_path) {
-                poster = `https://image.tmdb.org/t/p/w342${item.poster_path}`
-            }
+        callCast(movie) {
+            //son partita dall'evento mouseenter ="callCast(movie)"
+            //se abbiamo fatto già la prima chiamata allora non ripetere la seconda chiamata sulla stessa card 
 
-            return {
-                ...item,
-                flag: flag,
-                poster_path: poster,
-                vote_average: Math.round(item.vote_average / 2),
-           
+            if (movie.castList) {
+                return;
             }
-        })
+            const axiosOptions = {
+                params: {
+                    api_key: this.tmdbApiKey,
+                    language: "it-IT"
+                }
+            };
+            const type = movie.isSerie ? 'tv' : 'movie'
+            //axios richiede con il metodo get dei dati 
+            //GET /movie/{movie_id}/credits
+            //GET /tv/{movie_id}/credits
+            //movie lo prendo dall'argomento della funzione .id è la chiave dell'oggetto movie 
+            axios.get(`https://api.themoviedb.org/3/${type}/${movie.id}/credits`, axiosOptions)
+
+                .then((resp) => {
+                    // resp.data.cast è un array lo prendo, da response 
+                    //slice mi escono i primi 5 risultati 
+                    //movie.cast= è un array di stringhe (cioè "original_name"), original_name è la chiave dell'oggetto dell'array di resp.data.cast 
+
+                    movie.castList = resp.data.cast.slice(0, 5).map(item => item.original_name)
+
+                    //per aggiornare l'oggetto della computed 
+                    //siccome nella computed nel return aggiungo ...item, questa nn viene aggiornata con la chiave cast, quindi devo forzare l'aggiornamento   
+                    this.$forceUpdate()
+                })
+        },
+        //faccio la chiamata dei generi 
+        //il type viene passato tramite il mounted poi nell fullList aggiungo nel return genres
+        loadGenres(type) {
+            const axiosOptions = {
+                params: {
+                    api_key: this.tmdbApiKey,
+                    language: "it-IT"
+                }
+            };
+
+            // GET /genre/movie/list
+            // GET /genre/tv/list
+            axios.get(`https://api.themoviedb.org/3/genre/${type}/list`, axiosOptions)
+                .then((resp) => {
+                    //il type è === "movie", mi alva la risposta nell'array this.movieGenres
+                    if (type === "movie") {
+                        this.movieGenres = resp.data.genres
+                    } else {
+                        this.tvGenres = resp.data.genres
+                    }
+                })
+        },
+
+
+    },
+    //si aggiorna solo quand una variabile che usa viene aggiornata
+    //...item è il clone di uno degli elementi o di  movieList=[] o di tvSeriesList 
+    computed: {
+        fullList() {
+            //concateno i due array in un singolo array con lo spread operator
+            return [...this.moviesList, ...this.tvSeriesList].map(item => {
+                //con il map e lo spread operator  non ho più il riferimento all'oggetto originale , ma ad un suo clone al quale aggiungo anche altre proprietà, questo è il motivo per cui aggiornando il cast la computed necessita di un forceUpdate 
+                let poster = false;
+                if (item.poster_path) {
+                    poster = `https://image.tmdb.org/t/p/w342${item.poster_path}`
+                }
+
+                return {
+                    ...item,
+                    original_language: this.flags[item.original_language] || item.original_language,
+                    poster_path: poster,
+                    vote_average: Math.round(item.vote_average / 2),
+
+                    //creo una chiave genres che è un array dei nomi dei generi del singolo item (film o serie) e lo faccio con un map sulla chiave genre_ids che è un array degli id dei generi del singolo item. Nel Map cerco l'oggetto del genere (id +nome) nelle variabili tvGenres se è una serie tv , e in movieGenres se è un film e restituisco il name in modo da avere l'array dei nomi dei generi 
+                    genres: item.genre_ids.map((id) => {
+                        const genres = item.isSerie ? this.tvGenres : this.movieGenres
+                        return genres.find(genre => genre.id === id).name
+                    })
+
+                }
+            }).sort((a, b) => {
+                if ( a.original_title.toLowerCase() < b.original_title.toLowerCase() ) {
+                    return -1;
+                }
+                if ( a.original_title.toLowerCase() > b.original_title.toLowerCase() ) {
+                    return 1;
+                }
+                return 0;
+            }).filter((item) => {
+                //se genreFilter è vuoto restituisco semrpe true quindi mostro tutti gli eleemnti 
+                    if (!this.genreFilter) {
+                        return true
+                    }
+                    //altrimenti se genereFilter ha un id verifico che l'item includa qst id 
+                    return item.genre_ids.includes(this.genreFilter) 
+                })
+        },
+        allGenres() {
+            //abbiamo unito i generi dei film e serie tv eliminando duplicati 
+            return [...this.movieGenres, ...this.tvGenres].filter((genre, index, self) => {
+
+                //il findIndex trova il primo elemento dell'array che soddisfa la condizione della sua funzione
+                //ti torna l'indice dell'elemento che ha quello id vuol dire che è la prima volta che trovo quell'elemento e quindi lo include nell'array risultante del filtro altrimenti non lo include  
+                
+                return index === self.findIndex((t) => t.id === genre.id)
+                //ordinare in ordine alfabetico i generi
+            }).sort((a, b) => {
+                if ( a.name.toLowerCase() < b.name.toLowerCase() ) {
+                    return -1;
+                }
+                if ( a.name.toLowerCase() > b.name.toLowerCase() ) {
+                    return 1;
+                }
+                return 0;
+            })
+        }
     }
-}
 })

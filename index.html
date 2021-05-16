@@ -30,7 +30,7 @@
                 <div>
                     <form @submit.prevent="doSearch" class="d-flex">
                         <input class="form-control me-2" type="search" v-model="textTosearch" placeholder="Search" aria-label="Search">
-                        <button class="myBtn btn btn-outline-success " type="submit">Cerca</button>
+                        <button class="myBtn btn btn-outline-danger" type="submit">Cerca</button>
                     </form>
                 </div>
             </div>
@@ -39,31 +39,40 @@
 
         <!-- d-flex -->
         
-        <div class=" padd-wrapper">
-            <h1 class="color-white">Film/SerieTv</h1>
+        <div class="padd-wrapper">
+            <h1 class="color-white display-inl-bloc paddBott">Film/SerieTv</h1>
+            <!-- il value di una select a cui vene fatto il v-model è il value della option selezionata 
+            genreFilter è in data
+            -->
+            <select v-model="genreFilter" class="margLeft">
+                <option value="">Nessun filtro</option>
+                <option v-for="genre in allGenres" :value="genre.id">{{genre.name}} </option>
+            </select>
+           
             
             <ul class="d-flex">
-                <li v-for="movie in fullList" class="displayBlock">
+                <li v-for="movie in fullList" class="displayBlock" @mouseenter="callCast(movie)">
                   
                     <img class="imgPoster"
                     v-if="movie.poster_path" :src="movie.poster_path" :alt="movie.title" width="200">
                    
-                    <!-- 
-                        @mouseover="mouseOver"
-                        @mouseleave= "mouseOver"
-                        @click="toUserClick(movie)" 
-                    -->
-                    <!-- 
-                        :class="{selected: movie.backdrop_path === activeUser.avatar }"
-                        v-if="active" 
-                    -->
+                    
                     <div class="color-text-white wrapper-paragraph">
-                        <p>Titolo del film {{movie.title}}</p>
-                        <p>Titolo originale {{movie.original_title}}</p>
-                        <!-- <p>Lingua <img :src="movie.flag" :alt="movie.original_language" width="24" height="24" /></p> -->
+                        <p>Titolo del film: {{movie.title}}</p>
+                        <p>Titolo originale: {{movie.original_title}}</p>
+
+                        <p v-if="movie.castList && movie.castList.length > 0">Cast: {{ movie.castList.join(', ') }} </p>
+                        <p v-if="movie.genres && movie.genres.length > 0">Generi: {{ movie.genres.join(', ') }} </p>
+                        <!-- <p>Lingua <img :src="movie.flag" :alt="movie.original_language" width="24" height="24" /></p> 
+
+                        :class="variabileData" => class="pippo"
+                        :class="['item', variabileData, `item-${variabileData}`]" => class="item pippo item-pippo"
+                        :class="{ active: variabileData === 'pippo' }" => class="active"
+                        :class="['item', { active: variabileData === 'pippo' }]" => class="item active"
+                        -->
                         <p>
-                            Lingua
-                            <span :class="`flag-icon flag-icon-${flagsMap(movie)}`"></span>
+                            Lingua:
+                            <span :class="['flag-icon', `flag-icon-${movie.original_language}`]"></span>
                         </p>
                         <p>Voto</p>
                         <div class="stars">
@@ -75,6 +84,7 @@
                     </div>
                 </li>
             </ul>
+        
         </div>
     </div>
     <script src="scripts/app.js"></script>
