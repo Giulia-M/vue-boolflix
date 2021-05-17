@@ -23,10 +23,9 @@
 <body class="body-dark">
     <div id="app" >
         <!-- navbar-light bg-light -->
-
         <nav class="navbar fixed-top">
             <div class="container-fluid">
-                <img class="navbar-brand" src="img/Netflix.png" alt="netflix logo" width="100" height="54">
+                <img class="navbar-brand myLogo" src="img/Netflix.png" alt="netflix logo" >
                 <div>
                     <form @submit.prevent="doSearch" class="d-flex">
                         <input class="form-control me-2" type="search" v-model="textTosearch" placeholder="Search" aria-label="Search">
@@ -37,8 +36,7 @@
         </nav>
         
 
-        <!-- d-flex -->
-        
+        <!-- d-flex --> 
         <div class="padd-wrapper">
             <h1 class="color-white display-inl-bloc paddBott">Film/SerieTv</h1>
             <!-- il value di una select a cui vene fatto il v-model è il value della option selezionata 
@@ -54,9 +52,10 @@
                 <li v-for="movie in fullList" class="displayBlock" @mouseenter="callCast(movie)">
                   
                    
-                    <img :src="getImgSrc(movie)">
+                    <img class="cover" :src="getImgSrc(movie)">
+                    
                    
-                    <div class="color-text-white wrapper-paragraph">
+                    <div class="color-white wrapper-paragraph">
                         <p>Titolo del film: {{movie.title}}</p>
                         <p>Titolo originale: {{movie.original_title}}</p>
                         

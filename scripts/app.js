@@ -80,7 +80,7 @@ new Vue({
             //axios richiede con il metodo get dei dati 
             //GET /movie/{movie_id}/credits
             //GET /tv/{movie_id}/credits
-            //movie lo prendo dall'argomento della funzione .id è la chiave dell'oggetto movie 
+            // .id è la chiave dell'oggetto movie 
             axios.get(`https://api.themoviedb.org/3/${type}/${movie.id}/credits`, axiosOptions)
 
                 .then((resp) => {
@@ -104,7 +104,7 @@ new Vue({
             // GET /genre/tv/list
             axios.get(`https://api.themoviedb.org/3/genre/${type}/list`, axiosOptions)
                 .then((resp) => {
-                    //il type è === "movie", mi alva la risposta nell'array this.movieGenres
+                    //il type è === "movie", mi salva la risposta nell'array this.movieGenres
                     if (type === "movie") {
                         this.movieGenres = resp.data.genres
                     } else {
@@ -122,7 +122,6 @@ new Vue({
         }
     },
     //si aggiorna solo quand una variabile che usa viene aggiornata
-  
     computed: {
         fullList() {
             
@@ -142,6 +141,7 @@ new Vue({
                 }).filter(g => g !== undefined)
                 .map(g => g.name)
                 return item
+                
 
             }).sort((a, b) => {
                 if ( a.original_title.toLowerCase() < b.original_title.toLowerCase() ) {
@@ -159,6 +159,7 @@ new Vue({
                     //altrimenti se genereFilter ha un id verifico che l'item includa qst id 
                     return item.genre_ids.includes(this.genreFilter) 
                 })
-        }
+        },
+        
     }
 })
