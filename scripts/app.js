@@ -87,12 +87,7 @@ new Vue({
                     // resp.data.cast è un array lo prendo, da response 
                     //slice mi escono i primi 5 risultati 
                     //movie.cast= è un array di stringhe (cioè "original_name"), original_name è la chiave dell'oggetto dell'array di resp.data.cast 
-                
-
-                    
-                    this.$set(movie, "castList", resp.data.cast.slice(0, 5).map(item => item.original_name) )
-
-
+                    this.$set(movie, "castList", resp.data.cast.slice(0, 5).map(item => item.original_name))
                 })
         },
         //faccio la chiamata dei generi 
@@ -118,7 +113,13 @@ new Vue({
                 })
         },
 
-
+        getImgSrc(movie) {
+            if(movie.poster_path) {
+                return `https://image.tmdb.org/t/p/w342${movie.poster_path}`
+            } else {
+                return "img/No_cover.jpg"
+            }
+        }
     },
     //si aggiorna solo quand una variabile che usa viene aggiornata
   
@@ -127,17 +128,13 @@ new Vue({
             
             return this.moviesList.concat(this.tvSeriesList).map(item => {
                 
-                let poster = false;
-                if (item.poster_path) {
-                    poster = `https://image.tmdb.org/t/p/w342${item.poster_path}`
-                }
-                item.country= this.flags[item.original_language] || item.original_language,
-                item.poster = poster,
-                item.vote= Math.round(item.vote_average / 2),
 
 
+                item.country = this.flags[item.original_language] || item.original_language,
+                
+                item.vote = Math.round(item.vote_average / 2),
                  //creo una chiave genres che è un array dei nomi dei generi del singolo item (film o serie) e lo faccio con un map sulla chiave genre_ids che è un array degli id dei generi del singolo item. Nel Map cerco l'oggetto del genere (id +nome) nelle variabili tvGenres se è una serie tv , e in movieGenres se è un film e restituisco il name in modo da avere l'array dei nomi dei generi 
-                item.typeGenres= item.genre_ids.map((id) => {
+                item.typeGenres = item.genre_ids.map((id) => {
                     const genres = item.isSerie ? this.tvGenres : this.movieGenres
                     return genres.find(genre => genre.id === id).name
                 })

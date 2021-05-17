@@ -53,10 +53,9 @@
             <ul class="d-flex">
                 <li v-for="movie in fullList" class="displayBlock" @mouseenter="callCast(movie)">
                   
-                    <img class="imgPoster"
-                    v-if="movie.poster" :src="movie.poster" :alt="movie.title" width="200">
                    
-                    
+                    <img :src="getImgSrc(movie)" width="200">
+                   
                     <div class="color-text-white wrapper-paragraph">
                         <p>Titolo del film: {{movie.title}}</p>
                         <p>Titolo originale: {{movie.original_title}}</p>
