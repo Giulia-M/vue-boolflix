@@ -61,7 +61,7 @@ new Vue({
              */
             this.makeAxiosSearch("movie");
             this.makeAxiosSearch("tv");
-            //concat()?? 2 array uniti insieme 
+           
         },
         callCast(movie) {
             //son partita dall'evento mouseenter ="callCast(movie)"
@@ -121,12 +121,12 @@ new Vue({
 
     },
     //si aggiorna solo quand una variabile che usa viene aggiornata
-    //...item è il clone di uno degli elementi o di  movieList=[] o di tvSeriesList 
+  
     computed: {
         fullList() {
-            //concateno i due array in un singolo array con lo spread operator
+            
             return this.moviesList.concat(this.tvSeriesList).map(item => {
-                //con il map e lo spread operator  non ho più il riferimento all'oggetto originale , ma ad un suo clone al quale aggiungo anche altre proprietà, questo è il motivo per cui aggiornando il cast la computed necessita di un forceUpdate 
+                
                 let poster = false;
                 if (item.poster_path) {
                     poster = `https://image.tmdb.org/t/p/w342${item.poster_path}`
