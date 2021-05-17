@@ -128,8 +128,6 @@ new Vue({
             
             return this.moviesList.concat(this.tvSeriesList).map(item => {
                 
-
-
                 item.country = this.flags[item.original_language] || item.original_language,
                 
                 item.vote = Math.round(item.vote_average / 2),
@@ -164,15 +162,7 @@ new Vue({
                 //ti torna l'indice dell'elemento che ha quello id vuol dire che è la prima volta che trovo quell'elemento e quindi lo include nell'array risultante del filtro altrimenti non lo include  
                 
                 return index === self.findIndex((t) => t.id === genre.id)
-                //ordinare in ordine alfabetico i generi
-            }).sort((a, b) => {
-                if ( a.name.toLowerCase() < b.name.toLowerCase() ) {
-                    return -1;
-                }
-                if ( a.name.toLowerCase() > b.name.toLowerCase() ) {
-                    return 1;
-                }
-                return 0;
+                
             })
         }
     }

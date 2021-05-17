@@ -8,6 +8,9 @@
     background-color: rgb(0, 0, 0);
     font-family: "Open Sans", sans-serif;
 }
+img {
+    width: 200px;
+}
 li {
     list-style-type: none;
     display: inline-block;
