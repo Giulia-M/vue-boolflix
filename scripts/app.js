@@ -159,10 +159,6 @@ new Vue({
                     //altrimenti se genereFilter ha un id verifico che l'item includa qst id 
                     return item.genre_ids.includes(this.genreFilter) 
                 })
-        },
-        allGenres() {
-            //abbiamo unito i generi dei film e serie tv eliminando duplicati 
-            return [...this.movieGenres, ...this.tvGenres]
         }
     }
 })

@@ -46,7 +46,7 @@
             -->
             <select v-model="genreFilter" class="margLeft">
                 <option value="">Nessun filtro</option>
-                <option v-for="genre in allGenres" :value="genre.id">{{genre.name}} </option>
+                <option v-for="genre in movieGenres.concat(tvGenres)" :value="genre.id">{{genre.name}} </option>
             </select>
            
             
