@@ -54,7 +54,7 @@
                 <li v-for="movie in fullList" class="displayBlock" @mouseenter="callCast(movie)">
                   
                     <img class="imgPoster"
-                    v-if="movie.poster_path" :src="movie.poster_path" :alt="movie.title" width="200">
+                    v-if="movie.poster" :src="movie.poster" :alt="movie.title" width="200">
                    
                     
                     <div class="color-text-white wrapper-paragraph">
@@ -62,7 +62,7 @@
                         <p>Titolo originale: {{movie.original_title}}</p>
 
                         <p v-if="movie.castList && movie.castList.length > 0">Cast: {{ movie.castList.join(', ') }} </p>
-                        <p v-if="movie.genres && movie.genres.length > 0">Generi: {{ movie.genres.join(', ') }} </p>
+                        <p v-if="movie.typeGenres && movie.typeGenres.length > 0">Generi: {{ movie.typeGenres.join(', ') }} </p>
                         <!-- <p>Lingua <img :src="movie.flag" :alt="movie.original_language" width="24" height="24" /></p> 
 
                         :class="variabileData" => class="pippo"
@@ -72,12 +72,12 @@
                         -->
                         <p>
                             Lingua:
-                            <span :class="['flag-icon', `flag-icon-${movie.original_language}`]"></span>
+                            <span :class="['flag-icon', `flag-icon-${movie.country}`]"></span>
                         </p>
                         <p>Voto</p>
                         <div class="stars">
                             <span v-for="value in 5" class="star">
-                                <i v-if="value <= movie.vote_average" class="fa fa-star"></i>
+                                <i v-if="value <= movie.vote" class="fa fa-star"></i>
                                 <i v-else class="far fa-star"></i>
                             </span>
                         </div>

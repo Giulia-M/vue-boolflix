@@ -87,12 +87,12 @@ new Vue({
                     // resp.data.cast è un array lo prendo, da response 
                     //slice mi escono i primi 5 risultati 
                     //movie.cast= è un array di stringhe (cioè "original_name"), original_name è la chiave dell'oggetto dell'array di resp.data.cast 
+                
 
-                    movie.castList = resp.data.cast.slice(0, 5).map(item => item.original_name)
+                    
+                    this.$set(movie, "castList", resp.data.cast.slice(0, 5).map(item => item.original_name) )
 
-                    //per aggiornare l'oggetto della computed 
-                    //siccome nella computed nel return aggiungo ...item, questa nn viene aggiornata con la chiave cast, quindi devo forzare l'aggiornamento   
-                    this.$forceUpdate()
+
                 })
         },
         //faccio la chiamata dei generi 
@@ -125,26 +125,23 @@ new Vue({
     computed: {
         fullList() {
             //concateno i due array in un singolo array con lo spread operator
-            return [...this.moviesList, ...this.tvSeriesList].map(item => {
+            return this.moviesList.concat(this.tvSeriesList).map(item => {
                 //con il map e lo spread operator  non ho più il riferimento all'oggetto originale , ma ad un suo clone al quale aggiungo anche altre proprietà, questo è il motivo per cui aggiornando il cast la computed necessita di un forceUpdate 
                 let poster = false;
                 if (item.poster_path) {
                     poster = `https://image.tmdb.org/t/p/w342${item.poster_path}`
                 }
+                item.country= this.flags[item.original_language] || item.original_language,
+                item.poster = poster,
+                item.vote= Math.round(item.vote_average / 2),
 
-                return {
-                    ...item,
-                    original_language: this.flags[item.original_language] || item.original_language,
-                    poster_path: poster,
-                    vote_average: Math.round(item.vote_average / 2),
 
-                    //creo una chiave genres che è un array dei nomi dei generi del singolo item (film o serie) e lo faccio con un map sulla chiave genre_ids che è un array degli id dei generi del singolo item. Nel Map cerco l'oggetto del genere (id +nome) nelle variabili tvGenres se è una serie tv , e in movieGenres se è un film e restituisco il name in modo da avere l'array dei nomi dei generi 
-                    genres: item.genre_ids.map((id) => {
-                        const genres = item.isSerie ? this.tvGenres : this.movieGenres
-                        return genres.find(genre => genre.id === id).name
-                    })
-
-                }
+                 //creo una chiave genres che è un array dei nomi dei generi del singolo item (film o serie) e lo faccio con un map sulla chiave genre_ids che è un array degli id dei generi del singolo item. Nel Map cerco l'oggetto del genere (id +nome) nelle variabili tvGenres se è una serie tv , e in movieGenres se è un film e restituisco il name in modo da avere l'array dei nomi dei generi 
+                item.typeGenres= item.genre_ids.map((id) => {
+                    const genres = item.isSerie ? this.tvGenres : this.movieGenres
+                    return genres.find(genre => genre.id === id).name
+                })
+                return item
             }).sort((a, b) => {
                 if ( a.original_title.toLowerCase() < b.original_title.toLowerCase() ) {
                     return -1;
