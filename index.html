@@ -50,7 +50,7 @@
             </select>
            
             
-            <ul class="d-flex">
+            <ul class="d-flex mainWrapper">
                 <li v-for="movie in fullList" class="displayBlock" @mouseenter="callCast(movie)">
                   
                    
@@ -59,10 +59,10 @@
                     <div class="color-text-white wrapper-paragraph">
                         <p>Titolo del film: {{movie.title}}</p>
                         <p>Titolo originale: {{movie.original_title}}</p>
-
+                        
                         <p v-if="movie.castList && movie.castList.length > 0">Cast: {{ movie.castList.join(', ') }} </p>
                         <p v-if="movie.typeGenres && movie.typeGenres.length > 0">Generi: {{ movie.typeGenres.join(', ') }} </p>
-                        <!-- <p>Lingua <img :src="movie.flag" :alt="movie.original_language" width="24" height="24" /></p> 
+                        <!--  
 
                         :class="variabileData" => class="pippo"
                         :class="['item', variabileData, `item-${variabileData}`]" => class="item pippo item-pippo"

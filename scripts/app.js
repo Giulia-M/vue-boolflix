@@ -48,7 +48,7 @@ new Vue({
                             return tvShow
                         })
                     }
-                    console.log(resp.data.results)
+                    // console.log(resp.data.results)
 
                 })
         },
@@ -134,9 +134,15 @@ new Vue({
                  //creo una chiave genres che è un array dei nomi dei generi del singolo item (film o serie) e lo faccio con un map sulla chiave genre_ids che è un array degli id dei generi del singolo item. Nel Map cerco l'oggetto del genere (id +nome) nelle variabili tvGenres se è una serie tv , e in movieGenres se è un film e restituisco il name in modo da avere l'array dei nomi dei generi 
                 item.typeGenres = item.genre_ids.map((id) => {
                     const genres = item.isSerie ? this.tvGenres : this.movieGenres
-                    return genres.find(genre => genre.id === id).name
-                })
+                   
+                    const genresVar= genres.find(genre => genre.id === id)
+                    
+                    return genresVar
+
+                }).filter(g => g !== undefined)
+                .map(g => g.name)
                 return item
+
             }).sort((a, b) => {
                 if ( a.original_title.toLowerCase() < b.original_title.toLowerCase() ) {
                     return -1;
@@ -156,14 +162,7 @@ new Vue({
         },
         allGenres() {
             //abbiamo unito i generi dei film e serie tv eliminando duplicati 
-            return [...this.movieGenres, ...this.tvGenres].filter((genre, index, self) => {
-
-                //il findIndex trova il primo elemento dell'array che soddisfa la condizione della sua funzione
-                //ti torna l'indice dell'elemento che ha quello id vuol dire che è la prima volta che trovo quell'elemento e quindi lo include nell'array risultante del filtro altrimenti non lo include  
-                
-                return index === self.findIndex((t) => t.id === genre.id)
-                
-            })
+            return [...this.movieGenres, ...this.tvGenres]
         }
     }
 })

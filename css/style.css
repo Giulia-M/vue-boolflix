@@ -10,6 +10,11 @@
 }
 img {
     width: 200px;
+    position: relative;
+}
+.mainWrapper {
+    align-items: center;
+    margin-top: 50px;
 }
 li {
     list-style-type: none;
@@ -30,18 +35,16 @@ div button.myBtn {
 }
 .wrapper-paragraph {
     display:none;
-    position: absolute;
-    top: 50%;
-    transform: translate(50%, -50%);
-    right: 50%;
-
 }
 .displayBlock:hover .wrapper-paragraph {
     display: block;
     background-color: rgba(0, 0, 0, 1);
-    height: 300px;
     width: 200px;
- 
+    height: fit-content;
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    left: 50%;
 } 
 .stars {
     color:orange;
