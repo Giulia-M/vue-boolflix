@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -8,35 +9,35 @@
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/flag-icon.css">
 
-    <link rel="preconnect" href="https://fonts.gstatic.com"/>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300&display=swap"
-      rel="stylesheet"
-    />
+    <link rel="preconnect" href="https://fonts.gstatic.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300&display=swap" rel="stylesheet" />
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
 </head>
+
 <body class="body-dark">
-    <div id="app" >
+    <div id="app">
         <!-- navbar-light bg-light -->
         <nav class="navbar fixed-top">
             <div class="container-fluid">
-                <img class="navbar-brand myLogo" src="img/Netflix.png" alt="netflix logo" >
+                <img class="navbar-brand myLogo" src="img/Netflix.png" alt="netflix logo">
                 <div>
                     <form @submit.prevent="doSearch" class="d-flex">
-                        <input class="form-control me-2" type="search" v-model="textTosearch" placeholder="Search" aria-label="Search">
+                        <input class="form-control me-2" type="search" v-model="textTosearch" placeholder="Search"
+                            aria-label="Search">
                         <button class="myBtn btn btn-outline-danger" type="submit">Cerca</button>
                     </form>
                 </div>
             </div>
         </nav>
-        
 
-        <!-- d-flex --> 
+
+        <!-- d-flex -->
         <div class="padd-wrapper">
             <h1 class="color-white display-inl-bloc paddBott">Film/SerieTv</h1>
             <!-- il value di una select a cui vene fatto il v-model è il value della option selezionata 
@@ -44,23 +45,59 @@
             -->
             <select v-model="genreFilter" class="margLeft">
                 <option value="">Nessun filtro</option>
-                <option v-for="genre in movieGenres.concat(tvGenres)" :value="genre.id">{{genre.name}} </option>
+                <option v-for="genre in genresFilteredByCategory" :value="genre.id">{{genre.name}} </option>
+                <!-- movieGenres.concat(tvGenres) -->
             </select>
-           
-            
-            <ul class="d-flex mainWrapper">
-                <li v-for="movie in fullList" class="displayBlock" @mouseenter="callCast(movie)">
-                  
-                   
-                    <img class="cover" :src="getImgSrc(movie)">
-                    
-                   
-                    <div class="color-white wrapper-paragraph">
-                        <p>Titolo del film: {{movie.title}}</p>
-                        <p>Titolo originale: {{movie.original_title}}</p>
+
+            <!-- slider -->
+
+            <div class="sliderWrap d-flex" tabindex="-1" @keyup.left="changeImg(-1)" @keyup.right="changeImg(1)">
+                <div class="chevronLeft color-white">
+                    <i class="fas fa-chevron-left" @click="changeImg(-1)"></i>
+                </div>
+
+                <div class="sliderImages">
+                    <img :src="imagesList[activeImg]" class="imgBackground" alt="">
+
+
+                    <div class="dots-container">
+                        <a href="#" 
+                        class="dot" 
+                        :class="{active: activeImg === index }" 
                         
-                        <p v-if="movie.castList && movie.castList.length > 0">Cast: {{ movie.castList.join(', ') }} </p>
-                        <p v-if="movie.typeGenres && movie.typeGenres.length > 0">Generi: {{ movie.typeGenres.join(', ') }} </p>
+                        v-for="(img, index) in imagesList" 
+                        @click.prevent="onDotClick(index)">
+                        </a>
+                    </div>
+                </div>
+
+                <div class="chevronRight color-white">
+                    <i class="fas fa-chevron-right" @click="changeImg(1)"></i>
+                </div>
+            </div>
+
+
+            <ul class="mainWrapper">
+                <li v-for="movie in fullList" class="displayBlock" @mouseenter="callCast(movie)">
+
+
+                    <img class="cover " :src="getImgSrc(movie)">
+
+
+                    <div class="color-white wrapper-paragraph zoom">
+                        <p> <strong>Titolo del film:</strong>
+                            {{movie.title}}
+                        </p>
+                        <p> <strong>Titolo originale:</strong>{{movie.original_title}}</p>
+                        <div>
+
+                            <a href="#" v-if="movie.castList && movie.castList.length > 0 && loading === false"
+                                class="color-white"><strong>Cast:</strong> {{ movie.castList.join(', ') }} </a>
+                            <p v-else> <strong>Cast:</strong> <em>Caricamento in corso...</em></p>
+                        </div>
+
+                        <p v-if="movie.typeGenres && movie.typeGenres.length > 0"><strong>Generi:</strong> {{
+                            movie.typeGenres.join(', ') }} </p>
                         <!--  
 
                         :class="variabileData" => class="pippo"
@@ -69,20 +106,25 @@
                         :class="['item', { active: variabileData === 'pippo' }]" => class="item active"
                         -->
                         <p>
-                            Lingua:
+                            <strong>Lingua:</strong>
                             <span :class="['flag-icon', `flag-icon-${movie.country}`]"></span>
                         </p>
-                        <p>Voto</p>
-                        <div class="stars">
-                            <span v-for="value in 5" class="star">
-                                <i v-if="value <= movie.vote" class="fa fa-star"></i>
-                                <i v-else class="far fa-star"></i>
+                        <p><strong>Voto</strong>
+                            <span class="stars">
+                                <span v-for="value in 5" class="star">
+                                    <i v-if="value <= movie.vote" class="fa fa-star"></i>
+                                    <i v-else class="far fa-star"></i>
+                                </span>
                             </span>
+                        </p>
+                        <div class="iconPlay">
+                            <i class="far fa-play-circle"></i>
+                            <span class="color-white text-playMovie"><strong>Riproduci</strong></span>
                         </div>
                     </div>
                 </li>
             </ul>
-        
+
         </div>
     </div>
     <script src="scripts/app.js"></script>

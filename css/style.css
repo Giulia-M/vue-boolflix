@@ -3,15 +3,17 @@
     margin:0;
     box-sizing: border-box;
 }
-
+.wrapper-paragraph >p {
+    margin-bottom: 1px;
+}
 .body-dark {
     background-color: rgb(0, 0, 0);
     font-family: "Open Sans", sans-serif;
 }
 .cover {
     width: 200px;
-}
 
+}
 .myLogo {
     width:100px;
     height:54px;
@@ -23,8 +25,9 @@
 li {
     list-style-type: none;
     display: inline-block;
-    margin: 0 10px;
+    margin: 5px 10px;
     position: relative;
+    
 }
 div button.myBtn {
     color: red;
@@ -37,13 +40,16 @@ div button.myBtn {
 .wrapper-paragraph {
     display:none;
     background-color: rgba(0, 0, 0, 1);
-    width: 200px;
-    height:100%;
-    position: absolute;
-    top: 50%;
-    transform: translate(-50%, -50%);
+    width: 200px; 
+    padding: 5px;
+    height:100%; 
+    position: absolute; 
+    top: 50%; 
+    transform: translate(-50%, -50%); 
     left: 50%;
+    font-size: 13px;
 }
+
 .displayBlock:hover .wrapper-paragraph {
     display: block;
    
@@ -67,3 +73,67 @@ div button.myBtn {
 .margLeft {
     margin-left: 20px;
 }
+div > a, div> a:hover {
+    text-decoration: none;
+    color: rgb(150, 168, 151);
+}
+.iconPlay {
+    font-size: 23px;
+    cursor: pointer;
+    transition: transform .2s; /* Animation */
+    padding: 5px 30px;
+}
+.iconPlay:hover {
+    transform: scale(1.5);
+}
+.text-playMovie {
+    font-size: 15px;
+    color: rgb(219, 30, 30);
+    cursor: pointer;
+}
+.sliderImages {
+    max-width: 1200px;
+    position: relative;
+}
+.sliderImages img {
+   width: 100%;
+   height: 100%;
+   object-fit: cover;
+}
+.sliderWrap {
+    align-items: center;
+    justify-content: center;
+
+}
+.chevronLeft, .chevronRight {
+    font-size:33px;
+    cursor: pointer;
+
+}
+.dots-container {
+    display: flex;
+    position: absolute;
+    bottom: 20px;
+    right:39%;
+    background-color:rgba(179, 179, 185, 0.7);
+    border-radius: 24px;
+    padding: 10px;
+}
+.dot {
+    border-radius: 50%;
+    background-color: #fff;
+    width: 10px;
+    height: 10px;
+    margin-left: 12px;
+    margin-right: 12px; 
+}
+.active {
+    background-color: rgb(73, 73, 104);
+}
+li.dot {
+    list-style: none; 
+}
+.sliderWrap {
+    outline:none;
+}
+

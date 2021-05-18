@@ -12,14 +12,46 @@ new Vue({
         //generi film
         movieGenres: [],
         tvGenres: [],
-        genreFilter: ''
+        genreFilter: '',
+        loading: false,
+        imagesList: [
+            "img/film1.jpeg",
+            "img/alice.jpg",
+            "img/film3.jpg",
+            "img/film4.jpeg",
+            "img/film5.jpeg",
+            "img/film6.jpg",
+
+        ],
+        activeImg: 0,
     },
     //quando l'app è pronta (hook mounted) carico la lista dei generi dei film e delle serie salvandoli nelle rispettive variabili in data 
     mounted() {
         this.loadGenres('movie')
         this.loadGenres('tv')
+
+        const elementHtml= document.querySelector(".sliderWrap")
+        elementHtml.focus()
     },
     methods: {
+        changeImg(direction){
+
+            let newIndex = this.activeImg + direction;
+            
+            if (newIndex < 0) {
+
+                newIndex = this.imagesList.length - 1;
+
+            } else if (newIndex > (this.imagesList.length - 1 )) {
+                newIndex = 0;
+            }
+
+            this.activeImg = newIndex;
+
+        },
+        onDotClick(clickedIndex) {
+            this.activeImg = clickedIndex;
+        },
         makeAxiosSearch(searchType) {
             const axiosOptions = {
                 params: {
@@ -61,11 +93,12 @@ new Vue({
              */
             this.makeAxiosSearch("movie");
             this.makeAxiosSearch("tv");
-           
+
         },
         callCast(movie) {
             //son partita dall'evento mouseenter ="callCast(movie)"
             //se abbiamo fatto già la prima chiamata allora non ripetere la seconda chiamata sulla stessa card 
+            this.loading = true
 
             if (movie.castList) {
                 return;
@@ -84,11 +117,20 @@ new Vue({
             axios.get(`https://api.themoviedb.org/3/${type}/${movie.id}/credits`, axiosOptions)
 
                 .then((resp) => {
+
                     // resp.data.cast è un array lo prendo, da response 
-                    //slice mi escono i primi 5 risultati 
-                    //movie.cast= è un array di stringhe (cioè "original_name"), original_name è la chiave dell'oggetto dell'array di resp.data.cast 
+                        //slice mi escono i primi 5 risultati 
+                        //movie.cast= è un array di stringhe (cioè "original_name"), original_name è la chiave dell'oggetto dell'array di resp.data.cast 
+
+                        //Vue.set(object, propertyName, value) method:
                     this.$set(movie, "castList", resp.data.cast.slice(0, 5).map(item => item.original_name))
-                })
+
+                    this.loading = false
+                    
+                   
+                    
+                    
+                });
         },
         //faccio la chiamata dei generi 
         //il type viene passato tramite il mounted poi nell fullList aggiungo nel return genres
@@ -114,7 +156,7 @@ new Vue({
         },
 
         getImgSrc(movie) {
-            if(movie.poster_path) {
+            if (movie.poster_path) {
                 return `https://image.tmdb.org/t/p/w342${movie.poster_path}`
             } else {
                 return "img/No_cover.jpg"
@@ -124,42 +166,102 @@ new Vue({
     //si aggiorna solo quand una variabile che usa viene aggiornata
     computed: {
         fullList() {
-            
+
             return this.moviesList.concat(this.tvSeriesList).map(item => {
-                
-                item.country = this.flags[item.original_language] || item.original_language,
-                
-                item.vote = Math.round(item.vote_average / 2),
-                 //creo una chiave genres che è un array dei nomi dei generi del singolo item (film o serie) e lo faccio con un map sulla chiave genre_ids che è un array degli id dei generi del singolo item. Nel Map cerco l'oggetto del genere (id +nome) nelle variabili tvGenres se è una serie tv , e in movieGenres se è un film e restituisco il name in modo da avere l'array dei nomi dei generi 
+
+                item.country = this.flags[item.original_language] || item.original_language
+
+                item.vote = Math.round(item.vote_average / 2)
+
+                //creo una chiave 'item.typeGenres' -> è un array dei generi (film o serie) e lo faccio con un map sulla chiave 'genre_ids' -> è un array degli id dei generi del singolo item. 
+
+                /**
+                 * typeGenres: Array(2)
+                    0: "Documentario"
+                    1: "Musica"
+                 */
                 item.typeGenres = item.genre_ids.map((id) => {
                     const genres = item.isSerie ? this.tvGenres : this.movieGenres
-                   
-                    const genresVar= genres.find(genre => genre.id === id)
-                    
-                    return genresVar
 
-                }).filter(g => g !== undefined)
-                .map(g => g.name)
+                    const genresVar = genres.find(genre => genre.id === id)
+
+                    return genresVar
+                    /*Object
+                        id: (...)
+                        name: (...)
+                    */
+
+                }).filter(genreFound => genreFound !== undefined)
+                    .map(genreResult => genreResult.name)
+
+
                 return item
-                
+                /** 
+                 * Object
+                    adult: (...)
+                    backdrop_path: (...)
+                    country: "us"
+                    genre_ids: (...)
+                    id: (...)
+                    original_language: (...)
+                    original_title: (...)
+                    overview: (...)
+                    popularity: (...)
+                    poster_path: (...)
+                    release_date: (...)
+                    title: (...)
+                    typeGenres: (2) ["Documentario", "Musica"]
+                    video: (...)
+                    vote: 4
+                    vote_average: (...)
+                    vote_count: (...)
+                */
+
 
             }).sort((a, b) => {
-                if ( a.original_title.toLowerCase() < b.original_title.toLowerCase() ) {
+                if (a.original_title.toLowerCase() < b.original_title.toLowerCase()) {
                     return -1;
                 }
-                if ( a.original_title.toLowerCase() > b.original_title.toLowerCase() ) {
+                if (a.original_title.toLowerCase() > b.original_title.toLowerCase()) {
                     return 1;
                 }
                 return 0;
             }).filter((item) => {
                 //se genreFilter è vuoto restituisco semrpe true quindi mostro tutti gli eleemnti 
-                    if (!this.genreFilter) {
-                        return true
-                    }
-                    //altrimenti se genereFilter ha un id verifico che l'item includa qst id 
-                    return item.genre_ids.includes(this.genreFilter) 
-                })
+                if (!this.genreFilter) {
+                    return true
+                }
+                //altrimenti se genereFilter ha un id verifico che l'id corrisponda al genere selezionato dall'utente 
+                return item.genre_ids.includes(this.genreFilter)
+            })
         },
-        
+        //serve per non avere nella select i generi doppi dei film e delle serie tv 
+        genresFilteredByCategory() {
+            //il findIndex trova il primo elemento dell'array che soddisfa la condizione della sua funzione
+            //ti torna l'indice dell'elemento che ha quello id vuol dire che è la prima volta che trovo quell'elemento e quindi lo include nell'array risultante del filtro altrimenti non lo include 
+
+            /**
+             * currentGenre -> Object -> id: (...) name: (...)
+             * arrayGenres -> Array(19) -> 0:id: (...) name: (...) 
+             * index: 0
+             * */ 
+            return this.movieGenres.concat(this.tvGenres).filter((currentGenre, index, arrayGenres) => {
+
+                /**
+                 * index 0 ===  array(19)
+                 */
+                return index === arrayGenres.findIndex((indice) => indice.id === currentGenre.id)
+                //ordinare in ordine alfabetico i generi
+            }).sort((a, b) => {
+                if (a.name.toLowerCase() < b.name.toLowerCase()) {
+                    return -1;
+                }
+                if (a.name.toLowerCase() > b.name.toLowerCase()) {
+                    return 1;
+                }
+                return 0;
+            })
+        }
+
     }
 })
